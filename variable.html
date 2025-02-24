@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Variable in Flask</title>
+</head>
+<body>
+    <p>Variable Value: <span id="variableValue">Hello from Flask!</span></p>
+    <input type="text" id="newVariableValue" placeholder="New Value">
+    <button id="updateButton">Update Variable</button>
+    
+    <script>
+        // Function to fetch and update the variable
+        function updateVariable() {
+            const newVariableValue = document.getElementById("newVariableValue").value;
+            if (newVariableValue.trim() === '') {
+                alert('Please provide a new value for the variable.');
+                return;
+            }
+            
+            fetch('/variable', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ new_value: newVariableValue })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const variableValueElement = document.getElementById("variableValue");
+                if (data.message === 'Variable updated successfully') {
+                    variableValueElement.textContent = newVariableValue;
+                } else {
+                    alert('Variable update failed. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Attach the updateVariable function to the button click event
+        document.getElementById("updateButton").addEventListener("click", updateVariable);
+    </script>
+</body>
+</html>
