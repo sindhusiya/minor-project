@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI Powered Attendance Tracker</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/Bootstrap.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/minor.css') }}"
+    />
+
+    <script>
+      function loadReportData() {
+        // Make an AJAX request to fetch the report data
+        const reportdiv=document.getElementById('report')
+        reportdiv.style.display="block";
+        fetch('/get_report')
+          .then(response => response.json())
+          .then(data => {
+            // Clear the existing table data
+            const reportTable = document.getElementById('reportTable');
+            const tbody = reportTable.getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+    
+            // Populate the table with the fetched data
+            data.forEach(entry => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${entry[0]}</td>
+                <td>${entry[1]}</td>
+                <td>${entry[2]}</td>
+              `;
+              tbody.appendChild(row);
+            });
+          })
+          .catch(error => console.error(error));
+      }
+    
+      document.addEventListener('DOMContentLoaded', () => {
+        // Attach a click event listener to the "Get Report" button
+        const getReportButton = document.getElementById('getReportButton');
+        
+        getReportButton.addEventListener('click', loadReportData);
+      });
+    </script>
+
+
+
+
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div style="display: flex; justify-content: center">
+        <h1>AI Powered Attendance Tracker</h1>
+      </div>
+
+      <div class="row">
+      
+        <div class="col-8">
+
+      <div id="video_div"
+       style="display: flex; justify-content: center; align-items: center; margin-top: 50px;">
+       <img id="videofeed"  style="border:10px solid ; width: 500px; height: 500px;"  src="{{ url_for('video_feed') }}">
+      </div>
+      </div>
+      <div class="col-4">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-around;height: 100%;  ">
+            <div class="" >
+          <form action="/start_recognition" method="POST">
+            <button class="btn btn-dark btn-lg" style="height: 100px;" type="submit" >
+              Start Recognition
+            </button>
+          </form></div>
+          <div class="">
+          <form action="/stop_recognition" method="POST">
+            <button class="btn btn-dark btn-lg" style="height: 100px;" type="submit" >Stop Recognition</button>
+          </form>
+            </div>
+            <div class="">
+              
+                <button class="btn btn-dark btn-lg" id="getReportButton" style="height: 100px;" type="submit" >Get Report</button>
+              
+                </div>
+        </div>
+      
+</div>
+</div>
+
+
+<div id="report" class="row m-5" style="display:none;">
+  
+  <div class="report">
+    <h2>Attendance Report</h2>
+    <table class="table table-striped" id="reportTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Time</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+      </tbody>
+    </table>
+  </div>
+
+</div>
